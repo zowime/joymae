@@ -1,0 +1,33 @@
+import tkinter as tk
+from tkinter import messagebox
+
+def calculate_inter_arrival_time():
+    try:
+        service_rate = float(service_rate_entry.get())
+        if service_rate <= 0:
+            raise ValueError("Service rate must be greater than 0.")
+        
+        inter_arrival_time = 60 / service_rate  # in minutes
+        result_label.config(text=f"Inter-arrival time: {inter_arrival_time:.2f} minutes")
+    except ValueError as e:
+        messagebox.showerror("Invalid input", f"Error: {e}")
+
+# Set up the main application window
+root = tk.Tk()
+root.title("Inter-Arrival Time Calculator")
+
+# Service rate input
+tk.Label(root, text="Service Rate (clients per hour):").grid(row=0, column=0, padx=10, pady=10)
+service_rate_entry = tk.Entry(root)
+service_rate_entry.grid(row=0, column=1, padx=10, pady=10)
+
+# Calculate button
+calculate_button = tk.Button(root, text="Calculate", command=calculate_inter_arrival_time)
+calculate_button.grid(row=1, column=0, columnspan=2, pady=10)
+
+# Result display
+result_label = tk.Label(root, text="Inter-arrival time: ")
+result_label.grid(row=2, column=0, columnspan=2, pady=10)
+
+# Run the application
+root.mainloop()
