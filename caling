@@ -1,40 +1,64 @@
 import tkinter as tk
-import os
 
-class GitHubGUI:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("GitHub Repository Viewer")
-
-        self.label = tk.Label(root, text="Enter your GitHub Personal Access Token:")
-        self.label.pack()
-
-        self.token_entry = tk.Entry(root)
-        self.token_entry.pack()
-
-        self.button = tk.Button(root, text="Login", command=self.login)
-        self.button.pack()
-
-        self.repo_listbox = tk.Listbox(root)
-        self.repo_listbox.pack()
-
-    def login(self):
-        token = self.token_entry.get().strip()
-        if token:
+class Calculator:
+    def __init__(self, master):
+        self.master = master
+        master.title("Calculator")
+        
+        # Create input field
+        self.entry = tk.Entry(master, width=35, borderwidth=5)
+        self.entry.grid(row=0, column=0, columnspan=4, padx=10, pady=10)
+        
+        # Define button functions
+        def button_click(char):
+            current = self.entry.get()
+            self.entry.delete(0, tk.END)
+            self.entry.insert(0, current + char)
+        
+        def button_clear():
+            self.entry.delete(0, tk.END)
+        
+        def button_equal():
             try:
-                g = Github(token)
-                self.populate_repo_list(g)
-            except Exception as e:
-                self.repo_listbox.insert(tk.END, f"Error: {e}")
-        else:
-            self.repo_listbox.insert(tk.END, "Please enter a valid token")
+                result = str(eval(self.entry.get()))
+                self.entry.delete(0, tk.END)
+                self.entry.insert(0, result)
+            except:
+                self.entry.delete(0, tk.END)
+                self.entry.insert(0, "error") 
+        
+        # Create buttons
+        button_list = [
+            "7", "8", "9", "/",
+            "4", "5", "6", "*",
+            "1", "2", "3", "-",
+            "0", ".", "=", "+",
+        ]
+        row = 1
+        col = 0
+        for button_text in button_list:
+            button = tk.Button(master, text=button_text, width=5, height=2, 
+                               command=lambda text=button_text: button_click(text))
+            button.grid(row=row, column=col, padx=5, pady=5)
+            col += 1
+            if col > 3:
+                col = 0
+                row += 1
+        
+        # Create clear and equal buttons 
+        clear_button = tk.Button(master, text="Clear", width=11, height=2, 
+                                 command=button_clear)
+        clear_button.grid(row=row, column=0, columnspan=2, padx=5, pady=5)
+        
+        equal_button = tk.Button(master, text="=", width=11, height=2, 
+                                 command=button_equal)
+        equal_button.grid(row=row, column=2, columnspan=2, padx=5, pady=5)
 
-    def populate_repo_list(self, github):
-        self.repo_listbox.delete(0, tk.END)
-        for repo in github.get_user().get_repos():
-            self.repo_listbox.insert(tk.END, repo.full_name)
+# Create a Tkinter instance
+root = tk.Tk()
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = GitHubGUI(root)
-    root.mainloop()
+# Create an instance of Calculator class
+calculator = Calculator(root)
+
+# Run the GUI
+root.mainloop()
